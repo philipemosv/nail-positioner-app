@@ -3,12 +3,14 @@ import { WallCanvas } from './components/Canvas/WallCanvas';
 import { WallDimensions } from './components/Controls/WallDimensions';
 import { ObjectConfig } from './components/Controls/ObjectConfig';
 import { MeasurementPanel } from './components/Controls/MeasurementPanel';
+import { UnitToggle } from './components/Controls/UnitToggle';
 
 function App() {
   return (
     <div className="h-full w-full bg-gray-100 flex flex-col">
-      <header className="bg-blue-600 text-white px-4 py-3 shadow-md shrink-0">
+      <header className="bg-blue-600 text-white px-4 py-3 shadow-md shrink-0 flex items-center justify-between">
         <h1 className="text-lg font-semibold">Nail Positioner</h1>
+        <UnitToggle />
       </header>
 
       <main className="flex-1 flex flex-col overflow-hidden min-h-0">
