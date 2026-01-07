@@ -3,11 +3,14 @@ import { Stage, Layer, Rect, Line, Text } from 'react-konva';
 import { useAppStore } from '../../store/useAppStore';
 import { useCanvasScale } from '../../hooks/useMeasurements';
 import { GRID_STEP_CM } from '../../constants';
+import { WallObject } from './WallObject';
 
 export function WallCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const wall = useAppStore((state) => state.wall);
+  const objects = useAppStore((state) => state.objects);
+  const selectObject = useAppStore((state) => state.selectObject);
 
   // Update container size on resize
   useEffect(() => {
@@ -79,6 +82,8 @@ export function WallCanvas() {
               shadowBlur={10}
               shadowOpacity={0.1}
               shadowOffset={{ x: 2, y: 2 }}
+              onClick={() => selectObject(null)}
+              onTap={() => selectObject(null)}
             />
 
             {/* Grid */}
@@ -102,6 +107,17 @@ export function WallCanvas() {
               fill="#6b7280"
               rotation={-90}
             />
+
+            {/* Objects */}
+            {objects.map((obj) => (
+              <WallObject
+                key={obj.id}
+                object={obj}
+                scale={scale}
+                offsetX={offsetX}
+                offsetY={offsetY}
+              />
+            ))}
           </Layer>
         </Stage>
       )}
