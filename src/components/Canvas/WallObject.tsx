@@ -129,12 +129,11 @@ export function WallObject({ object, scale, offsetX, offsetY, onDrag, onDragEnd 
         </>
       )}
 
-      {/* Nails - rendered outside the draggable group for independent movement */}
+      {/* Nails */}
       {object.nails.map((nail) => (
         <NailMarker
           key={nail.id}
           nail={nail}
-          object={object}
           scale={scale}
           objectCanvasX={0} // Relative to group position
           objectCanvasY={0}

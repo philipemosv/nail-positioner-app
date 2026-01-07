@@ -5,6 +5,7 @@ import { useCanvasScale } from '../../hooks/useMeasurements';
 import { GRID_STEP_CM } from '../../constants';
 import { WallObject } from './WallObject';
 import { Guidelines } from './Guidelines';
+import { NailDistanceLines } from './NailDistanceLines';
 import type { SnapGuide } from '../../hooks/useSnapping';
 
 export function WallCanvas() {
@@ -141,6 +142,15 @@ export function WallCanvas() {
                 onDragEnd={handleObjectDragEnd}
               />
             ))}
+
+            {/* Nail distance lines (shown when a nail is selected) */}
+            <NailDistanceLines
+              scale={scale}
+              offsetX={offsetX}
+              offsetY={offsetY}
+              wallWidth={wallWidth}
+              wallHeight={wallHeight}
+            />
           </Layer>
         </Stage>
       )}

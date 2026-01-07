@@ -5,6 +5,7 @@ import { Button } from '../UI/Button';
 import { fromCm, toCm } from '../../utils/units';
 import { DEFAULT_OBJECT_WIDTH, DEFAULT_OBJECT_HEIGHT } from '../../constants';
 import { distributeNails } from '../../utils/nailDistribution';
+import { NailPositionEditor } from './NailPositionEditor';
 
 export function ObjectConfig() {
   const unit = useAppStore((state) => state.unit);
@@ -167,10 +168,10 @@ export function ObjectConfig() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-500">
-              Drag nails on canvas to adjust positions
-            </p>
           </div>
+
+          {/* Manual nail position editor */}
+          <NailPositionEditor />
 
           <Button variant="danger" size="sm" onClick={handleDelete} className="w-full">
             Delete Object
