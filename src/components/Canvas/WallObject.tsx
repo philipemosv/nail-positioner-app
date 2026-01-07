@@ -2,6 +2,7 @@ import { Rect, Group, Text } from 'react-konva';
 import type { WallObject as WallObjectType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { constrainToWall } from '../../utils/coordinates';
+import { NailMarker } from './NailMarker';
 import type { KonvaEventObject } from 'konva/lib/Node';
 
 interface WallObjectProps {
@@ -95,6 +96,18 @@ export function WallObject({ object, scale, offsetX, offsetY }: WallObjectProps)
           <Rect x={width - 4} y={height - 4} width={8} height={8} fill="#2563eb" cornerRadius={2} />
         </>
       )}
+
+      {/* Nails - rendered outside the draggable group for independent movement */}
+      {object.nails.map((nail) => (
+        <NailMarker
+          key={nail.id}
+          nail={nail}
+          object={object}
+          scale={scale}
+          objectCanvasX={0} // Relative to group position
+          objectCanvasY={0}
+        />
+      ))}
     </Group>
   );
 }

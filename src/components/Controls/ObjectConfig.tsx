@@ -13,6 +13,7 @@ export function ObjectConfig() {
   const updateObject = useAppStore((state) => state.updateObject);
   const removeObject = useAppStore((state) => state.removeObject);
   const selectObject = useAppStore((state) => state.selectObject);
+  const setNailCount = useAppStore((state) => state.setNailCount);
   const selectedObject = useSelectedObject();
 
   const [nameInput, setNameInput] = useState('');
@@ -80,6 +81,12 @@ export function ObjectConfig() {
     }
   };
 
+  const handleNailCountChange = (count: number) => {
+    if (selectedObject && count >= 0 && count <= 10) {
+      setNailCount(selectedObject.id, count);
+    }
+  };
+
   const handleDelete = () => {
     if (selectedObject) {
       removeObject(selectedObject.id);
@@ -138,6 +145,31 @@ export function ObjectConfig() {
               min="1"
               step="0.1"
             />
+          </div>
+
+          {/* Nail configuration */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Nail Count</label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4].map((count) => (
+                <button
+                  key={count}
+                  onClick={() => handleNailCountChange(count)}
+                  className={`
+                    flex-1 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px]
+                    ${selectedObject?.nails.length === count
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }
+                  `}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500">
+              Drag nails on canvas to adjust positions
+            </p>
           </div>
 
           <Button variant="danger" size="sm" onClick={handleDelete} className="w-full">
