@@ -20,7 +20,7 @@ npm run preview   # Preview production build
 ## Tech Stack
 
 - **Framework**: React 19 + TypeScript
-- **Build**: Vite
+- **Build**: Vite with vite-plugin-pwa
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite plugin)
 - **State**: Zustand with localStorage persistence
 - **Canvas**: React-Konva (HTML5 Canvas)
@@ -39,6 +39,7 @@ The Zustand store (`src/store/useAppStore.ts`) manages:
 - Objects array (position, dimensions, nails)
 - Selected object/nail IDs
 - Display unit preference (cm/inch)
+- Automatic localStorage persistence
 
 ### Key Calculations
 ```typescript
@@ -48,16 +49,20 @@ nailY = object.y + nail.offsetY
 
 // Auto-distribution for 2 nails:
 margin = objectWidth * 0.15  // 15% from edges
+
+// Snap threshold for guidelines:
+SNAP_THRESHOLD = 5  // cm
 ```
 
 ## Project Structure
 
 ```
 src/
+├── __tests__/        # Unit tests for utilities
 ├── components/
 │   ├── Canvas/       # WallCanvas, WallObject, NailMarker, Guidelines
 │   ├── Controls/     # WallDimensions, ObjectConfig, MeasurementPanel, UnitToggle
-│   └── UI/           # Reusable Button, Input, Modal components
+│   └── UI/           # Reusable Button, Input components
 ├── store/            # Zustand store with persistence
 ├── hooks/            # useSnapping, useMeasurements
 ├── utils/            # units.ts, nailDistribution.ts, coordinates.ts
@@ -65,22 +70,19 @@ src/
 └── constants/        # Default values, snap thresholds
 ```
 
-## Implementation Status
+## Features
 
-- [x] Phase 2: Project Setup
-- [ ] Phase 3: Core Data Models
-- [ ] Phase 4: Virtual Wall Canvas
-- [ ] Phase 5: Object Placement
-- [ ] Phase 6: Nail Configuration
-- [ ] Phase 7: Smart Guidelines
-- [ ] Phase 8: Measurement Output
-- [ ] Phase 9: Unit Switching
-- [ ] Phase 10: Mobile UX Polish
-- [ ] Phase 11: Final Testing & Build
+- **Multiple Objects**: Place and arrange several objects on the same wall
+- **Draggable Nails**: Manually adjust nail positions within objects
+- **Smart Snapping**: Auto-snap to wall center, edges, and other objects
+- **Unit Switching**: Toggle between cm and inches
+- **Measurement Output**: Copy nail coordinates to clipboard
+- **PWA Support**: Installable, works offline
 
-## Mobile-First Design Principles
+## Mobile-First Design
 
-- Bottom sheet panels for controls (thumb-reachable)
+- Bottom control panel (thumb-reachable)
 - 44px minimum touch targets
 - Canvas takes majority of viewport
 - Portrait orientation optimized
+- Disabled pinch-zoom for better canvas interaction
