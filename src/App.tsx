@@ -2,6 +2,7 @@ import './App.css';
 import { WallCanvas } from './components/Canvas/WallCanvas';
 import { WallDimensions } from './components/Controls/WallDimensions';
 import { ObjectConfig } from './components/Controls/ObjectConfig';
+import { MeasurementPanel } from './components/Controls/MeasurementPanel';
 
 function App() {
   return (
@@ -17,10 +18,12 @@ function App() {
         </div>
 
         {/* Control panel */}
-        <div className="bg-white border-t shadow-lg p-4 shrink-0 max-h-[40vh] overflow-y-auto space-y-4">
+        <div className="bg-white border-t shadow-lg p-4 shrink-0 max-h-[50vh] overflow-y-auto space-y-4">
           <WallDimensions />
           <hr className="border-gray-200" />
           <ObjectConfig />
+          <hr className="border-gray-200" />
+          <MeasurementPanel />
         </div>
       </main>
     </div>
