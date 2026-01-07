@@ -1,13 +1,16 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { Stage, Layer, Rect, Line, Text } from 'react-konva';
 import { useAppStore } from '../../store/useAppStore';
 import { useCanvasScale } from '../../hooks/useMeasurements';
 import { GRID_STEP_CM } from '../../constants';
 import { WallObject } from './WallObject';
+import { Guidelines } from './Guidelines';
+import type { SnapGuide } from '../../hooks/useSnapping';
 
 export function WallCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [activeGuides, setActiveGuides] = useState<SnapGuide[]>([]);
   const wall = useAppStore((state) => state.wall);
   const objects = useAppStore((state) => state.objects);
   const selectObject = useAppStore((state) => state.selectObject);
@@ -34,6 +37,14 @@ export function WallCanvas() {
 
   const dimensions = useCanvasScale(containerSize.width, containerSize.height);
   const { scale, offsetX, offsetY, wallWidth, wallHeight } = dimensions;
+
+  const handleObjectDrag = useCallback((guides: SnapGuide[]) => {
+    setActiveGuides(guides);
+  }, []);
+
+  const handleObjectDragEnd = useCallback(() => {
+    setActiveGuides([]);
+  }, []);
 
   // Generate grid lines
   const gridLines = [];
@@ -89,6 +100,16 @@ export function WallCanvas() {
             {/* Grid */}
             {gridLines}
 
+            {/* Snap guidelines */}
+            <Guidelines
+              guides={activeGuides}
+              scale={scale}
+              offsetX={offsetX}
+              offsetY={offsetY}
+              wallWidth={wallWidth}
+              wallHeight={wallHeight}
+            />
+
             {/* Dimension labels */}
             <Text
               x={offsetX + wallWidth / 2}
@@ -116,6 +137,8 @@ export function WallCanvas() {
                 scale={scale}
                 offsetX={offsetX}
                 offsetY={offsetY}
+                onDrag={handleObjectDrag}
+                onDragEnd={handleObjectDragEnd}
               />
             ))}
           </Layer>

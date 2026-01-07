@@ -2,6 +2,7 @@ import { Rect, Group, Text } from 'react-konva';
 import type { WallObject as WallObjectType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { constrainToWall } from '../../utils/coordinates';
+import { useSnapping, type SnapGuide } from '../../hooks/useSnapping';
 import { NailMarker } from './NailMarker';
 import type { KonvaEventObject } from 'konva/lib/Node';
 
@@ -10,13 +11,18 @@ interface WallObjectProps {
   scale: number;
   offsetX: number;
   offsetY: number;
+  onDrag?: (guides: SnapGuide[]) => void;
+  onDragEnd?: () => void;
 }
 
-export function WallObject({ object, scale, offsetX, offsetY }: WallObjectProps) {
+export function WallObject({ object, scale, offsetX, offsetY, onDrag, onDragEnd }: WallObjectProps) {
   const wall = useAppStore((state) => state.wall);
+  const objects = useAppStore((state) => state.objects);
   const selectedObjectId = useAppStore((state) => state.selectedObjectId);
   const selectObject = useAppStore((state) => state.selectObject);
   const updateObject = useAppStore((state) => state.updateObject);
+
+  const { calculateSnap } = useSnapping(wall, objects, object.id);
 
   const isSelected = selectedObjectId === object.id;
 
@@ -26,14 +32,36 @@ export function WallObject({ object, scale, offsetX, offsetY }: WallObjectProps)
   const width = object.width * scale;
   const height = object.height * scale;
 
+  const handleDragMove = (e: KonvaEventObject<DragEvent>) => {
+    const node = e.target;
+    // Convert canvas position back to real coordinates
+    const newX = (node.x() - offsetX) / scale;
+    const newY = (node.y() - offsetY) / scale;
+
+    // Calculate snap position
+    const snapResult = calculateSnap(newX, newY, object.width, object.height);
+
+    // Apply snap position visually
+    node.position({
+      x: offsetX + snapResult.x * scale,
+      y: offsetY + snapResult.y * scale,
+    });
+
+    // Notify parent of guides
+    onDrag?.(snapResult.guides);
+  };
+
   const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
     const node = e.target;
     // Convert canvas position back to real coordinates
     const newX = (node.x() - offsetX) / scale;
     const newY = (node.y() - offsetY) / scale;
 
-    // Constrain to wall bounds
-    const constrained = constrainToWall(newX, newY, object.width, object.height, wall);
+    // Calculate snap position
+    const snapResult = calculateSnap(newX, newY, object.width, object.height);
+
+    // Constrain to wall bounds (snap first, then constrain)
+    const constrained = constrainToWall(snapResult.x, snapResult.y, object.width, object.height, wall);
 
     updateObject(object.id, {
       x: constrained.x,
@@ -45,6 +73,9 @@ export function WallObject({ object, scale, offsetX, offsetY }: WallObjectProps)
       x: offsetX + constrained.x * scale,
       y: offsetY + constrained.y * scale,
     });
+
+    // Clear guides
+    onDragEnd?.();
   };
 
   const handleClick = () => {
@@ -56,6 +87,7 @@ export function WallObject({ object, scale, offsetX, offsetY }: WallObjectProps)
       x={x}
       y={y}
       draggable
+      onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
       onClick={handleClick}
       onTap={handleClick}
