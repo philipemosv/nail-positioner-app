@@ -1,37 +1,62 @@
-import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type CSSProperties } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', className = '', children, ...props }, ref) => {
-    const baseStyles = `
-      inline-flex items-center justify-center
-      font-medium rounded-lg
-      transition-colors duration-150
-      focus:outline-none focus:ring-2 focus:ring-offset-2
-      disabled:opacity-50 disabled:cursor-not-allowed
-      min-h-[44px]
-    `;
-
-    const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
-      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+  ({ variant = 'primary', size = 'md', className = '', style, children, ...props }, ref) => {
+    const baseStyles: CSSProperties = {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      fontWeight: 500,
+      borderRadius: '8px',
+      transition: 'all 0.15s ease',
+      cursor: 'pointer',
+      border: 'none',
     };
 
-    const sizes = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg',
+    const variants: Record<string, CSSProperties> = {
+      primary: {
+        backgroundColor: '#3b82f6',
+        color: 'white',
+      },
+      secondary: {
+        backgroundColor: '#f3f4f6',
+        color: '#374151',
+        border: '1px solid #e5e7eb',
+      },
+      danger: {
+        backgroundColor: '#ef4444',
+        color: 'white',
+      },
+      ghost: {
+        backgroundColor: 'transparent',
+        color: '#4b5563',
+      },
+    };
+
+    const sizes: Record<string, CSSProperties> = {
+      sm: { padding: '8px 12px', fontSize: '14px', minHeight: '40px' },
+      md: { padding: '12px 20px', fontSize: '14px', minHeight: '48px' },
+      lg: { padding: '14px 24px', fontSize: '16px', minHeight: '52px' },
+    };
+
+    const combinedStyle: CSSProperties = {
+      ...baseStyles,
+      ...variants[variant],
+      ...sizes[size],
+      ...style,
     };
 
     return (
       <button
         ref={ref}
-        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+        className={className}
+        style={combinedStyle}
         {...props}
       >
         {children}

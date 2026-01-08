@@ -2,32 +2,38 @@ import './App.css';
 import { WallCanvas } from './components/Canvas/WallCanvas';
 import { WallDimensions } from './components/Controls/WallDimensions';
 import { ObjectConfig } from './components/Controls/ObjectConfig';
-import { MeasurementPanel } from './components/Controls/MeasurementPanel';
 import { UnitToggle } from './components/Controls/UnitToggle';
 
 function App() {
   return (
-    <div className="h-full w-full bg-gray-100 flex flex-col">
-      <header className="bg-blue-600 text-white px-4 py-3 shadow-md shrink-0 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Nail Positioner</h1>
-        <UnitToggle />
-      </header>
+    <div style={{ height: '100%', width: '100%', backgroundColor: '#e8edf2', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ width: '100%', maxWidth: '1280px', height: '100%', maxHeight: '900px', display: 'flex', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+        {/* Left Sidebar */}
+        <aside style={{ width: '400px', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+          {/* Header */}
+          <div style={{ padding: '32px', borderBottom: '1px solid #f3f4f6' }}>
+            <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#1f2937' }}>Settings</h1>
+          </div>
 
-      <main className="flex-1 flex flex-col overflow-hidden min-h-0">
-        {/* Canvas area */}
-        <div className="flex-1 min-h-0">
-          <WallCanvas />
-        </div>
+          {/* Controls */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '32px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+            <WallDimensions />
+            <ObjectConfig />
+          </div>
 
-        {/* Control panel */}
-        <div className="bg-white border-t shadow-lg p-4 shrink-0 max-h-[50vh] overflow-y-auto space-y-4">
-          <WallDimensions />
-          <hr className="border-gray-200" />
-          <ObjectConfig />
-          <hr className="border-gray-200" />
-          <MeasurementPanel />
-        </div>
-      </main>
+          {/* Unit Toggle at bottom */}
+          <div style={{ padding: '32px', borderTop: '1px solid #f3f4f6' }}>
+            <UnitToggle />
+          </div>
+        </aside>
+
+        {/* Main Canvas Area */}
+        <main style={{ flex: 1, position: 'relative', backgroundColor: '#c5d0da' }}>
+          <div style={{ position: 'absolute', inset: '24px' }}>
+            <WallCanvas />
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

@@ -10,23 +10,22 @@ import { NailPositionEditor } from './NailPositionEditor';
 export function ObjectConfig() {
   const unit = useAppStore((state) => state.unit);
   const wall = useAppStore((state) => state.wall);
+  const objects = useAppStore((state) => state.objects);
   const addObject = useAppStore((state) => state.addObject);
   const updateObject = useAppStore((state) => state.updateObject);
   const removeObject = useAppStore((state) => state.removeObject);
   const selectObject = useAppStore((state) => state.selectObject);
-  const setNailCount = useAppStore((state) => state.setNailCount);
   const selectedObject = useSelectedObject();
 
   const [nameInput, setNameInput] = useState('');
   const [widthInput, setWidthInput] = useState('');
   const [heightInput, setHeightInput] = useState('');
 
-  // Sync inputs when selected object changes
   useEffect(() => {
     if (selectedObject) {
       setNameInput(selectedObject.name);
-      setWidthInput(fromCm(selectedObject.width, unit).toFixed(1));
-      setHeightInput(fromCm(selectedObject.height, unit).toFixed(1));
+      setWidthInput(fromCm(selectedObject.width, unit).toFixed(0));
+      setHeightInput(fromCm(selectedObject.height, unit).toFixed(0));
     } else {
       setNameInput('');
       setWidthInput('');
@@ -38,15 +37,13 @@ export function ObjectConfig() {
     const defaultWidth = DEFAULT_OBJECT_WIDTH;
     const defaultHeight = DEFAULT_OBJECT_HEIGHT;
 
-    // Center the new object on the wall
     const x = (wall.width - defaultWidth) / 2;
     const y = (wall.height - defaultHeight) / 2;
 
-    // Create with 2 nails by default
     const nails = distributeNails(defaultWidth, defaultHeight, 2);
 
     addObject({
-      name: `Object ${Date.now() % 1000}`,
+      name: `My Frame`,
       width: defaultWidth,
       height: defaultHeight,
       x,
@@ -62,29 +59,33 @@ export function ObjectConfig() {
     }
   };
 
-  const handleWidthChange = (value: string) => {
-    setWidthInput(value);
+  const handleWidthBlur = () => {
     if (selectedObject) {
-      const numValue = parseFloat(value);
+      const numValue = parseFloat(widthInput);
       if (!isNaN(numValue) && numValue > 0) {
         updateObject(selectedObject.id, { width: toCm(numValue, unit) });
+      } else {
+        setWidthInput(fromCm(selectedObject.width, unit).toFixed(0));
       }
     }
   };
 
-  const handleHeightChange = (value: string) => {
-    setHeightInput(value);
+  const handleHeightBlur = () => {
     if (selectedObject) {
-      const numValue = parseFloat(value);
+      const numValue = parseFloat(heightInput);
       if (!isNaN(numValue) && numValue > 0) {
         updateObject(selectedObject.id, { height: toCm(numValue, unit) });
+      } else {
+        setHeightInput(fromCm(selectedObject.height, unit).toFixed(0));
       }
     }
   };
 
-  const handleNailCountChange = (count: number) => {
-    if (selectedObject && count >= 0 && count <= 10) {
-      setNailCount(selectedObject.id, count);
+  const handleKeyDown = (e: React.KeyboardEvent, field: 'width' | 'height') => {
+    if (e.key === 'Enter') {
+      if (field === 'width') handleWidthBlur();
+      else handleHeightBlur();
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -94,94 +95,87 @@ export function ObjectConfig() {
     }
   };
 
-  const handleDeselect = () => {
-    selectObject(null);
-  };
-
   const unitSuffix = unit === 'cm' ? 'cm' : 'in';
 
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-800">Objects</h3>
-        <Button size="sm" onClick={handleAddObject}>
-          + Add Object
+  if (objects.length === 0) {
+    return (
+      <div>
+        <Button onClick={handleAddObject} style={{ width: '100%' }}>
+          Add Frame
         </Button>
       </div>
+    );
+  }
 
-      {selectedObject ? (
-        <div className="space-y-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-blue-800">Selected Object</span>
-            <button
-              onClick={handleDeselect}
-              className="text-blue-600 text-sm hover:underline"
-            >
-              Deselect
-            </button>
-          </div>
+  if (!selectedObject) {
+    return (
+      <div>
+        <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '20px' }}>
+          Click on a frame to edit it
+        </p>
+        <Button onClick={handleAddObject} variant="secondary" style={{ width: '100%' }}>
+          Add Another Frame
+        </Button>
+      </div>
+    );
+  }
 
-          <Input
-            label="Name"
-            value={nameInput}
-            onChange={(e) => handleNameChange(e.target.value)}
-          />
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* Frame Name */}
+      <div>
+        <Input
+          label="Frame Name"
+          value={nameInput}
+          onChange={(e) => handleNameChange(e.target.value)}
+        />
+      </div>
 
-          <div className="grid grid-cols-2 gap-3">
+      {/* Frame Size */}
+      <div>
+        <h3 style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '16px' }}>
+          Frame Size (W x H {unitSuffix})
+        </h3>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <div style={{ flex: 1 }}>
             <Input
-              label="Width"
               type="number"
               value={widthInput}
-              onChange={(e) => handleWidthChange(e.target.value)}
+              onChange={(e) => setWidthInput(e.target.value)}
+              onBlur={handleWidthBlur}
+              onKeyDown={(e) => handleKeyDown(e, 'width')}
               suffix={unitSuffix}
               min="1"
-              step="0.1"
+              step="1"
             />
+          </div>
+          <div style={{ flex: 1 }}>
             <Input
-              label="Height"
               type="number"
               value={heightInput}
-              onChange={(e) => handleHeightChange(e.target.value)}
+              onChange={(e) => setHeightInput(e.target.value)}
+              onBlur={handleHeightBlur}
+              onKeyDown={(e) => handleKeyDown(e, 'height')}
               suffix={unitSuffix}
               min="1"
-              step="0.1"
+              step="1"
             />
           </div>
-
-          {/* Nail configuration */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Nail Count</label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4].map((count) => (
-                <button
-                  key={count}
-                  onClick={() => handleNailCountChange(count)}
-                  className={`
-                    flex-1 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px]
-                    ${selectedObject?.nails.length === count
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }
-                  `}
-                >
-                  {count}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Manual nail position editor */}
-          <NailPositionEditor />
-
-          <Button variant="danger" size="sm" onClick={handleDelete} className="w-full">
-            Delete Object
-          </Button>
         </div>
-      ) : (
-        <p className="text-sm text-gray-500 italic">
-          Tap an object to select it, or add a new one.
-        </p>
-      )}
+      </div>
+
+      {/* Nail Position Editor */}
+      <NailPositionEditor />
+
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: '16px', paddingTop: '16px' }}>
+        <Button variant="secondary" onClick={() => selectObject(null)} style={{ flex: 1 }}>
+          Deselect
+        </Button>
+        <Button variant="danger" onClick={handleDelete} style={{ flex: 1 }}>
+          Delete
+        </Button>
+      </div>
     </div>
   );
 }

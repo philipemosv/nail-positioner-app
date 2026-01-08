@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes } from 'react';
+import { forwardRef, type InputHTMLAttributes, type CSSProperties } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -6,29 +6,61 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, suffix, className = '', ...props }, ref) => {
+  ({ label, suffix, className = '', style, ...props }, ref) => {
+    const containerStyle: CSSProperties = {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+    };
+
+    const labelStyle: CSSProperties = {
+      fontSize: '14px',
+      color: '#4b5563',
+    };
+
+    const inputWrapperStyle: CSSProperties = {
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+    };
+
+    const inputStyle: CSSProperties = {
+      width: '100%',
+      padding: '12px 16px',
+      paddingRight: suffix ? '56px' : '16px',
+      backgroundColor: 'white',
+      border: '1px solid #e5e7eb',
+      borderRadius: '8px',
+      color: '#111827',
+      fontSize: '14px',
+      minHeight: '48px',
+      outline: 'none',
+      transition: 'border-color 0.15s ease',
+      ...style,
+    };
+
+    const suffixStyle: CSSProperties = {
+      position: 'absolute',
+      right: '16px',
+      color: '#9ca3af',
+      fontSize: '14px',
+      pointerEvents: 'none',
+    };
+
     return (
-      <div className="flex flex-col gap-1">
+      <div style={containerStyle}>
         {label && (
-          <label className="text-sm font-medium text-gray-700">{label}</label>
+          <label style={labelStyle}>{label}</label>
         )}
-        <div className="relative flex items-center">
+        <div style={inputWrapperStyle}>
           <input
             ref={ref}
-            className={`
-              w-full px-3 py-2
-              border border-gray-300 rounded-lg
-              text-gray-900 placeholder-gray-400
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-              disabled:bg-gray-100 disabled:cursor-not-allowed
-              min-h-[44px]
-              ${suffix ? 'pr-12' : ''}
-              ${className}
-            `}
+            className={className}
+            style={inputStyle}
             {...props}
           />
           {suffix && (
-            <span className="absolute right-3 text-gray-500 text-sm pointer-events-none">
+            <span style={suffixStyle}>
               {suffix}
             </span>
           )}

@@ -9,32 +9,48 @@ export function UnitToggle() {
     setUnit(newUnit);
   };
 
+  const baseButtonStyle: React.CSSProperties = {
+    flex: 1,
+    padding: '14px 24px',
+    fontSize: '14px',
+    fontWeight: 500,
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+  };
+
+  const activeStyle: React.CSSProperties = {
+    ...baseButtonStyle,
+    backgroundColor: '#3b82f6',
+    color: 'white',
+  };
+
+  const inactiveStyle: React.CSSProperties = {
+    ...baseButtonStyle,
+    backgroundColor: '#f3f4f6',
+    color: '#4b5563',
+  };
+
   return (
-    <div className="flex rounded-lg bg-blue-700 p-1">
-      <button
-        onClick={() => handleToggle('cm')}
-        className={`
-          px-3 py-1.5 text-sm font-medium rounded-md transition-colors min-h-[36px]
-          ${unit === 'cm'
-            ? 'bg-white text-blue-600 shadow-sm'
-            : 'text-blue-100 hover:text-white'
-          }
-        `}
-      >
-        cm
-      </button>
-      <button
-        onClick={() => handleToggle('inch')}
-        className={`
-          px-3 py-1.5 text-sm font-medium rounded-md transition-colors min-h-[36px]
-          ${unit === 'inch'
-            ? 'bg-white text-blue-600 shadow-sm'
-            : 'text-blue-100 hover:text-white'
-          }
-        `}
-      >
-        in
-      </button>
+    <div>
+      <span style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', display: 'block', marginBottom: '16px' }}>
+        Unit
+      </span>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button
+          onClick={() => handleToggle('cm')}
+          style={unit === 'cm' ? activeStyle : inactiveStyle}
+        >
+          cm
+        </button>
+        <button
+          onClick={() => handleToggle('inch')}
+          style={unit === 'inch' ? activeStyle : inactiveStyle}
+        >
+          inches
+        </button>
+      </div>
     </div>
   );
 }

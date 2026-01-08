@@ -1,15 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAppStore, useSelectedObject } from '../../store/useAppStore';
 import { getNailDistances } from '../../utils/coordinates';
 import { formatMeasurement } from '../../utils/units';
-import { Button } from '../UI/Button';
 
 export function MeasurementPanel() {
   const wall = useAppStore((state) => state.wall);
   const unit = useAppStore((state) => state.unit);
   const objects = useAppStore((state) => state.objects);
   const selectedObject = useSelectedObject();
-  const [copied, setCopied] = useState(false);
 
   // Calculate measurements for selected object or all objects
   const measurements = useMemo(() => {
@@ -29,89 +27,26 @@ export function MeasurementPanel() {
     );
   }, [selectedObject, objects, wall]);
 
-  const handleCopyAll = async () => {
-    const text = measurements
-      .map(
-        (m) =>
-          `${m.objectName} - Nail ${m.nailIndex}:\n` +
-          `  From Top: ${formatMeasurement(m.fromTop, unit)}\n` +
-          `  From Left: ${formatMeasurement(m.fromLeft, unit)}`
-      )
-      .join('\n\n');
-
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
   if (measurements.length === 0) {
-    return (
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-gray-800">Nail Measurements</h3>
-        <p className="text-sm text-gray-500 italic">
-          Add an object and nails to see measurements.
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-800">
-          Nail Measurements
-          {selectedObject && (
-            <span className="text-gray-500 font-normal ml-1">
-              ({selectedObject.name})
-            </span>
-          )}
-        </h3>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleCopyAll}
-          className="text-xs"
-        >
-          {copied ? 'Copied!' : 'Copy All'}
-        </Button>
-      </div>
+    <div className="absolute top-4 right-4 bg-slate-800 text-white rounded-lg shadow-lg p-4 min-w-[200px]">
+      <h3 className="text-sm font-medium mb-3 text-slate-300">
+        Calculated Nail Positions
+      </h3>
 
-      <div className="space-y-2 max-h-48 overflow-y-auto">
+      <div className="space-y-2">
         {measurements.map((m) => (
-          <div
-            key={m.nailId}
-            className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-          >
-            <div className="text-xs text-gray-500 mb-1">
-              {selectedObject ? `Nail ${m.nailIndex}` : `${m.objectName} - Nail ${m.nailIndex}`}
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <span className="text-gray-600">From Top:</span>
-                <span className="font-mono font-medium ml-2 text-gray-900">
-                  {formatMeasurement(m.fromTop, unit)}
-                </span>
-              </div>
-              <div>
-                <span className="text-gray-600">From Left:</span>
-                <span className="font-mono font-medium ml-2 text-gray-900">
-                  {formatMeasurement(m.fromLeft, unit)}
-                </span>
-              </div>
-            </div>
+          <div key={m.nailId} className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+            <span className="text-slate-200">
+              Hole ({formatMeasurement(m.fromLeft, unit)}, {formatMeasurement(m.fromTop, unit)})
+            </span>
           </div>
         ))}
       </div>
-
-      {!selectedObject && objects.length > 1 && (
-        <p className="text-xs text-gray-500">
-          Select an object to see only its measurements.
-        </p>
-      )}
     </div>
   );
 }
