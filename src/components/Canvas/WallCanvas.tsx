@@ -6,6 +6,7 @@ import { GRID_STEP_CM } from '../../constants';
 import { WallObject } from './WallObject';
 import { Guidelines } from './Guidelines';
 import { NailDistanceLines } from './NailDistanceLines';
+import { fromCm } from '../../utils/units';
 import type { SnapGuide } from '../../hooks/useSnapping';
 
 export function WallCanvas() {
@@ -15,6 +16,11 @@ export function WallCanvas() {
   const wall = useAppStore((state) => state.wall);
   const objects = useAppStore((state) => state.objects);
   const selectObject = useAppStore((state) => state.selectObject);
+  const unit = useAppStore((state) => state.unit);
+
+  const unitSuffix = unit === 'cm' ? 'cm' : 'in';
+  const displayWidth = fromCm(wall.width, unit).toFixed(1);
+  const displayHeight = fromCm(wall.height, unit).toFixed(1);
 
   // Update container size on resize
   useEffect(() => {
@@ -114,18 +120,18 @@ export function WallCanvas() {
             {/* Dimension labels */}
             <Text
               x={offsetX + wallWidth / 2}
-              y={offsetY + wallHeight + 10}
-              text={`${wall.width} cm`}
-              fontSize={12}
+              y={offsetY + wallHeight + 15}
+              text={`${displayWidth} ${unitSuffix}`}
+              fontSize={14}
               fill="#6b7280"
               align="center"
-              offsetX={20}
+              offsetX={30}
             />
             <Text
-              x={offsetX - 35}
-              y={offsetY + wallHeight / 2}
-              text={`${wall.height} cm`}
-              fontSize={12}
+              x={offsetX - 15}
+              y={offsetY + wallHeight / 2 + 30}
+              text={`${displayHeight} ${unitSuffix}`}
+              fontSize={14}
               fill="#6b7280"
               rotation={-90}
             />
