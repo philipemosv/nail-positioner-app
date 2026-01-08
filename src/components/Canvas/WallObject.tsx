@@ -6,12 +6,19 @@ import { useSnapping, type SnapGuide } from '../../hooks/useSnapping';
 import { NailMarker } from './NailMarker';
 import type { KonvaEventObject } from 'konva/lib/Node';
 
+export interface DragInfo {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 interface WallObjectProps {
   object: WallObjectType;
   scale: number;
   offsetX: number;
   offsetY: number;
-  onDrag?: (guides: SnapGuide[]) => void;
+  onDrag?: (objectId: string, guides: SnapGuide[], dragInfo: DragInfo) => void;
   onDragEnd?: () => void;
 }
 
@@ -47,8 +54,13 @@ export function WallObject({ object, scale, offsetX, offsetY, onDrag, onDragEnd 
       y: offsetY + snapResult.y * scale,
     });
 
-    // Notify parent of guides
-    onDrag?.(snapResult.guides);
+    // Notify parent of guides and drag info
+    onDrag?.(object.id, snapResult.guides, {
+      x: snapResult.x,
+      y: snapResult.y,
+      width: object.width,
+      height: object.height,
+    });
   };
 
   const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {

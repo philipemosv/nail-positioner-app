@@ -29,14 +29,10 @@ export function NailPositionEditor() {
     }
   }, [currentNail, unit]);
 
-  // Auto-select first nail when object is selected
+  // Reset editing state when object selection changes
   useEffect(() => {
-    if (selectedObject && selectedObject.nails.length > 0 && !editingNailId && !selectedNailId) {
-      const firstNail = selectedObject.nails[0];
-      setEditingNailId(firstNail.id);
-      selectNail(firstNail.id);
-    }
-  }, [selectedObject, editingNailId, selectedNailId, selectNail]);
+    setEditingNailId(null);
+  }, [selectedObject?.id]);
 
   if (!selectedObject) {
     return null;
