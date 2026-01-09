@@ -12,9 +12,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'Nail Positioner',
-        short_name: 'NailPos',
-        description: 'Accurately position nails when hanging objects on walls',
+        name: 'Hang It',
+        short_name: 'Hang It',
+        description: 'Find the perfect spot for your nails when hanging things on walls',
         theme_color: '#2563eb',
         background_color: '#f3f4f6',
         display: 'standalone',
