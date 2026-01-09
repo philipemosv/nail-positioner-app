@@ -247,6 +247,7 @@ export function WallCanvas() {
               offsetY={offsetY}
               wallWidth={wallWidth}
               wallHeight={wallHeight}
+              isDragging={dragInfo !== null}
             />
           </Layer>
         </Stage>

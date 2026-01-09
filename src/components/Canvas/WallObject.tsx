@@ -3,7 +3,7 @@ import type { WallObject as WallObjectType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { constrainToWall } from '../../utils/coordinates';
 import { useSnapping, type SnapGuide } from '../../hooks/useSnapping';
-import { NailMarker } from './NailMarker';
+import { NailMarker, nailClickFlag } from './NailMarker';
 import type { KonvaEventObject } from 'konva/lib/Node';
 
 export interface DragInfo {
@@ -91,6 +91,12 @@ export function WallObject({ object, scale, offsetX, offsetY, onDrag, onDragEnd 
   };
 
   const handleClick = () => {
+    // Check if a nail was just clicked (flag set by NailMarker)
+    if (nailClickFlag.clicked) {
+      nailClickFlag.clicked = false;
+      return;
+    }
+
     selectObject(object.id);
   };
 
@@ -149,6 +155,7 @@ export function WallObject({ object, scale, offsetX, offsetY, onDrag, onDragEnd 
           scale={scale}
           objectCanvasX={0} // Relative to group position
           objectCanvasY={0}
+          objectId={object.id}
         />
       ))}
     </Group>

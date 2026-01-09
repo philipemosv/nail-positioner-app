@@ -9,6 +9,7 @@ interface NailDistanceLinesProps {
   offsetY: number;
   wallWidth: number;
   wallHeight: number;
+  isDragging?: boolean;
 }
 
 export function NailDistanceLines({
@@ -17,6 +18,7 @@ export function NailDistanceLines({
   offsetY,
   wallWidth,
   wallHeight,
+  isDragging = false,
 }: NailDistanceLinesProps) {
   const wall = useAppStore((state) => state.wall);
   const unit = useAppStore((state) => state.unit);
@@ -26,7 +28,8 @@ export function NailDistanceLines({
   // Find the selected nail
   const selectedNail = selectedObject?.nails.find((n) => n.id === selectedNailId);
 
-  if (!selectedObject || !selectedNail) {
+  // Don't show while dragging
+  if (!selectedObject || !selectedNail || isDragging) {
     return null;
   }
 

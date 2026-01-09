@@ -1,13 +1,16 @@
 import { Circle, Group, Line } from 'react-konva';
 import type { Nail } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
-import type { KonvaEventObject } from 'konva/lib/Node';
+
+// Flag to communicate nail clicks to parent WallObject
+export const nailClickFlag = { clicked: false };
 
 interface NailMarkerProps {
   nail: Nail;
   scale: number;
   objectCanvasX: number;
   objectCanvasY: number;
+  objectId: string;
 }
 
 const NAIL_RADIUS = 6;
@@ -18,19 +21,25 @@ export function NailMarker({
   scale,
   objectCanvasX,
   objectCanvasY,
+  objectId,
 }: NailMarkerProps) {
   const selectedNailId = useAppStore((state) => state.selectedNailId);
-  const selectNail = useAppStore((state) => state.selectNail);
+  const selectedObjectId = useAppStore((state) => state.selectedObjectId);
 
   const isSelected = selectedNailId === nail.id;
 
-  // Position relative to canvas
   const x = objectCanvasX + nail.offsetX * scale;
   const y = objectCanvasY + nail.offsetY * scale;
 
-  const handleClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.cancelBubble = true; // Prevent object selection
-    selectNail(nail.id);
+  const handleClick = () => {
+    nailClickFlag.clicked = true;
+
+    if (selectedObjectId !== objectId) {
+      // Select both object and nail together (store's selectObject clears nail)
+      useAppStore.setState({ selectedObjectId: objectId, selectedNailId: nail.id });
+    } else {
+      useAppStore.setState({ selectedNailId: nail.id });
+    }
   };
 
   return (
