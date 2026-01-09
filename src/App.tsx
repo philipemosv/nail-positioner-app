@@ -1,11 +1,28 @@
+import { useState } from 'react';
 import './App.css';
 import { WallCanvas } from './components/Canvas/WallCanvas';
 import { WallDimensions } from './components/Controls/WallDimensions';
 import { ObjectConfig } from './components/Controls/ObjectConfig';
 import { UnitToggle } from './components/Controls/UnitToggle';
 import { HoleInfoPanel } from './components/Controls/HoleInfoPanel';
+import { LandingPage } from './components/LandingPage';
+
+const STARTED_KEY = 'nail-positioner-started';
 
 function App() {
+  const [hasStarted, setHasStarted] = useState(() => {
+    return localStorage.getItem(STARTED_KEY) === 'true';
+  });
+
+  const handleStart = () => {
+    localStorage.setItem(STARTED_KEY, 'true');
+    setHasStarted(true);
+  };
+
+  if (!hasStarted) {
+    return <LandingPage onStart={handleStart} />;
+  }
+
   return (
     <div style={{ height: '100%', width: '100%', backgroundColor: '#e8edf2', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div style={{ width: '100%', maxWidth: '1280px', height: '100%', maxHeight: '900px', display: 'flex', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
