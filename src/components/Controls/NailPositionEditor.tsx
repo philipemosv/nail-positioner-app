@@ -110,7 +110,7 @@ export function NailPositionEditor() {
   const activeNailId = editingNailId || selectedNailId;
 
   const cardStyle = (isActive: boolean): React.CSSProperties => ({
-    padding: '16px',
+    padding: '12px',
     borderRadius: '8px',
     border: `2px solid ${isActive ? '#60a5fa' : '#e5e7eb'}`,
     backgroundColor: isActive ? '#eff6ff' : 'white',
@@ -119,21 +119,21 @@ export function NailPositionEditor() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {/* Hole Position Header */}
       <h3 style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>
         Hole Position (From Frame Top-Left)
       </h3>
 
       {/* Nail/Hole list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {selectedObject.nails.map((nail, index) => (
           <div
             key={nail.id}
             style={cardStyle(activeNailId === nail.id)}
             onClick={() => handleNailSelect(nail.id)}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: activeNailId === nail.id ? '10px' : '0' }}>
               <span style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>Hole {index + 1}</span>
               {selectedObject.nails.length > 1 && (
                 <button
@@ -141,9 +141,9 @@ export function NailPositionEditor() {
                     e.stopPropagation();
                     handleRemoveHole();
                   }}
-                  style={{ color: '#9ca3af', background: 'none', border: 'none', padding: '4px', cursor: 'pointer' }}
+                  style={{ color: '#9ca3af', background: 'none', border: 'none', padding: '2px', cursor: 'pointer' }}
                 >
-                  <svg style={{ width: '20px', height: '20px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg style={{ width: '18px', height: '18px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
@@ -151,7 +151,7 @@ export function NailPositionEditor() {
             </div>
 
             {activeNailId === nail.id && currentNail && (
-              <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <div style={{ flex: 1 }}>
                   <Input
                     label="X"

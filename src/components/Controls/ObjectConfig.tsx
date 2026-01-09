@@ -14,7 +14,6 @@ export function ObjectConfig() {
   const addObject = useAppStore((state) => state.addObject);
   const updateObject = useAppStore((state) => state.updateObject);
   const removeObject = useAppStore((state) => state.removeObject);
-  const selectObject = useAppStore((state) => state.selectObject);
   const selectedObject = useSelectedObject();
 
   const [nameInput, setNameInput] = useState('');
@@ -121,7 +120,7 @@ export function ObjectConfig() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Frame Name */}
       <div>
         <Input
@@ -133,10 +132,10 @@ export function ObjectConfig() {
 
       {/* Frame Size */}
       <div>
-        <h3 style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '12px' }}>
           Frame Size (W x H {unitSuffix})
         </h3>
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
           <div style={{ flex: 1 }}>
             <Input
               type="number"
@@ -168,12 +167,9 @@ export function ObjectConfig() {
       <NailPositionEditor />
 
       {/* Actions */}
-      <div style={{ display: 'flex', gap: '16px', paddingTop: '16px' }}>
-        <Button variant="secondary" onClick={() => selectObject(null)} style={{ flex: 1 }}>
-          Deselect
-        </Button>
-        <Button variant="danger" onClick={handleDelete} style={{ flex: 1 }}>
-          Delete
+      <div style={{ paddingTop: '8px' }}>
+        <Button variant="danger" onClick={handleDelete} style={{ width: '100%' }}>
+          Delete Frame
         </Button>
       </div>
     </div>

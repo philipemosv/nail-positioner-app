@@ -3,6 +3,7 @@ import { WallCanvas } from './components/Canvas/WallCanvas';
 import { WallDimensions } from './components/Controls/WallDimensions';
 import { ObjectConfig } from './components/Controls/ObjectConfig';
 import { UnitToggle } from './components/Controls/UnitToggle';
+import { HoleInfoPanel } from './components/Controls/HoleInfoPanel';
 
 function App() {
   return (
@@ -11,18 +12,18 @@ function App() {
         {/* Left Sidebar */}
         <aside style={{ width: '400px', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
           {/* Header */}
-          <div style={{ padding: '32px', borderBottom: '1px solid #f3f4f6' }}>
-            <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#1f2937' }}>Settings</h1>
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid #f3f4f6' }}>
+            <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1f2937' }}>Settings</h1>
           </div>
 
           {/* Controls */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '32px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <WallDimensions />
             <ObjectConfig />
           </div>
 
           {/* Unit Toggle at bottom */}
-          <div style={{ padding: '32px', borderTop: '1px solid #f3f4f6' }}>
+          <div style={{ padding: '20px 24px', borderTop: '1px solid #f3f4f6' }}>
             <UnitToggle />
           </div>
         </aside>
@@ -32,6 +33,7 @@ function App() {
           <div style={{ position: 'absolute', inset: '24px' }}>
             <WallCanvas />
           </div>
+          <HoleInfoPanel />
         </main>
       </div>
     </div>
