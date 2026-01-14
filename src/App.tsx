@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import './App.css';
 import { WallCanvas } from './components/Canvas/WallCanvas';
 import { WallDimensions } from './components/Controls/WallDimensions';
 import { ObjectConfig } from './components/Controls/ObjectConfig';

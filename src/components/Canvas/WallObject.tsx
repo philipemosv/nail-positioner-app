@@ -3,7 +3,8 @@ import type { WallObject as WallObjectType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { constrainToWall } from '../../utils/coordinates';
 import { useSnapping, type SnapGuide } from '../../hooks/useSnapping';
-import { NailMarker, nailClickFlag } from './NailMarker';
+import { NailMarker } from './NailMarker';
+import { nailClickFlag } from './nailClickFlag';
 import type { KonvaEventObject } from 'konva/lib/Node';
 
 export interface DragInfo {

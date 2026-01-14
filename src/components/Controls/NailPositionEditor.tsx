@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useAppStore, useSelectedObject } from '../../store/useAppStore';
 import { Input } from '../UI/Input';
 import { Button } from '../UI/Button';
@@ -14,25 +14,25 @@ export function NailPositionEditor() {
   const selectedObject = useSelectedObject();
 
   const [editingNailId, setEditingNailId] = useState<string | null>(null);
-  const [offsetXInput, setOffsetXInput] = useState('');
-  const [offsetYInput, setOffsetYInput] = useState('');
+  const [editingField, setEditingField] = useState<'x' | 'y' | null>(null);
+  const [editValue, setEditValue] = useState('');
 
-  const currentNail = selectedObject?.nails.find(
-    (n) => n.id === (editingNailId || selectedNailId)
-  );
-
-  // Sync inputs when nail selection changes
-  useEffect(() => {
-    if (currentNail) {
-      setOffsetXInput(fromCm(currentNail.offsetX, unit).toFixed(1));
-      setOffsetYInput(fromCm(currentNail.offsetY, unit).toFixed(1));
+  // Track previous object to reset editing state when object changes
+  const prevObjectIdRef = useRef(selectedObject?.id);
+  if (prevObjectIdRef.current !== selectedObject?.id) {
+    prevObjectIdRef.current = selectedObject?.id;
+    // Reset editing state synchronously during render
+    if (editingNailId !== null) {
+      setEditingNailId(null);
     }
-  }, [currentNail, unit]);
+  }
 
-  // Reset editing state when object selection changes
-  useEffect(() => {
-    setEditingNailId(null);
-  }, [selectedObject?.id]);
+  const activeNailId = editingNailId || selectedNailId;
+  const currentNail = selectedObject?.nails.find((n) => n.id === activeNailId);
+
+  // Derive display values from store
+  const displayOffsetX = currentNail ? fromCm(currentNail.offsetX, unit).toFixed(1) : '';
+  const displayOffsetY = currentNail ? fromCm(currentNail.offsetY, unit).toFixed(1) : '';
 
   if (!selectedObject) {
     return null;
@@ -41,73 +41,66 @@ export function NailPositionEditor() {
   const handleNailSelect = (nailId: string) => {
     setEditingNailId(nailId);
     selectNail(nailId);
-    const nail = selectedObject.nails.find((n) => n.id === nailId);
-    if (nail) {
-      setOffsetXInput(fromCm(nail.offsetX, unit).toFixed(1));
-      setOffsetYInput(fromCm(nail.offsetY, unit).toFixed(1));
-    }
   };
 
-  const handleOffsetXBlur = () => {
-    if (currentNail && selectedObject) {
-      const numValue = parseFloat(offsetXInput);
-      if (!isNaN(numValue)) {
-        const cmValue = toCm(numValue, unit);
-        const constrained = constrainNailPosition(
-          cmValue,
-          currentNail.offsetY,
-          selectedObject.width,
-          selectedObject.height
-        );
-        updateNail(selectedObject.id, currentNail.id, { offsetX: constrained.offsetX });
-        setOffsetXInput(fromCm(constrained.offsetX, unit).toFixed(1));
-      } else {
-        setOffsetXInput(fromCm(currentNail.offsetX, unit).toFixed(1));
-      }
-    }
+  const handleFocus = (field: 'x' | 'y') => {
+    setEditingField(field);
+    setEditValue(field === 'x' ? displayOffsetX : displayOffsetY);
   };
 
-  const handleOffsetYBlur = () => {
+  const handleChange = (value: string) => {
+    setEditValue(value);
+  };
+
+  const handleBlur = (field: 'x' | 'y') => {
     if (currentNail && selectedObject) {
-      const numValue = parseFloat(offsetYInput);
+      const numValue = parseFloat(editValue);
       if (!isNaN(numValue)) {
         const cmValue = toCm(numValue, unit);
-        const constrained = constrainNailPosition(
-          currentNail.offsetX,
-          cmValue,
-          selectedObject.width,
-          selectedObject.height
-        );
-        updateNail(selectedObject.id, currentNail.id, { offsetY: constrained.offsetY });
-        setOffsetYInput(fromCm(constrained.offsetY, unit).toFixed(1));
-      } else {
-        setOffsetYInput(fromCm(currentNail.offsetY, unit).toFixed(1));
+        if (field === 'x') {
+          const constrained = constrainNailPosition(
+            cmValue,
+            currentNail.offsetY,
+            selectedObject.width,
+            selectedObject.height
+          );
+          updateNail(selectedObject.id, currentNail.id, { offsetX: constrained.offsetX });
+        } else {
+          const constrained = constrainNailPosition(
+            currentNail.offsetX,
+            cmValue,
+            selectedObject.width,
+            selectedObject.height
+          );
+          updateNail(selectedObject.id, currentNail.id, { offsetY: constrained.offsetY });
+        }
       }
     }
+    setEditingField(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, field: 'x' | 'y') => {
     if (e.key === 'Enter') {
-      if (field === 'x') handleOffsetXBlur();
-      else handleOffsetYBlur();
+      handleBlur(field);
       (e.target as HTMLInputElement).blur();
     }
   };
 
   const handleAddHole = () => {
-    if (selectedObject) {
-      setNailCount(selectedObject.id, selectedObject.nails.length + 1);
-    }
+    setNailCount(selectedObject.id, selectedObject.nails.length + 1);
   };
 
   const handleRemoveHole = () => {
-    if (selectedObject && selectedObject.nails.length > 1) {
+    if (selectedObject.nails.length > 1) {
       setNailCount(selectedObject.id, selectedObject.nails.length - 1);
     }
   };
 
   const unitSuffix = unit === 'cm' ? 'cm' : 'in';
-  const activeNailId = editingNailId || selectedNailId;
+
+  // Get current input values
+  const offsetXInput = editingField === 'x' ? editValue : displayOffsetX;
+  const offsetYInput = editingField === 'y' ? editValue : displayOffsetY;
 
   const cardStyle = (isActive: boolean): React.CSSProperties => ({
     padding: '12px',
@@ -157,8 +150,9 @@ export function NailPositionEditor() {
                     label="X"
                     type="number"
                     value={offsetXInput}
-                    onChange={(e) => setOffsetXInput(e.target.value)}
-                    onBlur={handleOffsetXBlur}
+                    onFocus={() => handleFocus('x')}
+                    onChange={(e) => handleChange(e.target.value)}
+                    onBlur={() => handleBlur('x')}
                     onKeyDown={(e) => handleKeyDown(e, 'x')}
                     onClick={(e) => e.stopPropagation()}
                     suffix={unitSuffix}
@@ -171,8 +165,9 @@ export function NailPositionEditor() {
                     label="Y"
                     type="number"
                     value={offsetYInput}
-                    onChange={(e) => setOffsetYInput(e.target.value)}
-                    onBlur={handleOffsetYBlur}
+                    onFocus={() => handleFocus('y')}
+                    onChange={(e) => handleChange(e.target.value)}
+                    onBlur={() => handleBlur('y')}
                     onKeyDown={(e) => handleKeyDown(e, 'y')}
                     onClick={(e) => e.stopPropagation()}
                     suffix={unitSuffix}

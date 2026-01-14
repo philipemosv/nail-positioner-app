@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAppStore, useSelectedObject } from '../../store/useAppStore';
 import { Input } from '../UI/Input';
 import { Button } from '../UI/Button';
@@ -16,21 +16,14 @@ export function ObjectConfig() {
   const removeObject = useAppStore((state) => state.removeObject);
   const selectedObject = useSelectedObject();
 
-  const [nameInput, setNameInput] = useState('');
-  const [widthInput, setWidthInput] = useState('');
-  const [heightInput, setHeightInput] = useState('');
+  // Track which field is being edited
+  const [editingField, setEditingField] = useState<'name' | 'width' | 'height' | null>(null);
+  const [editValue, setEditValue] = useState('');
 
-  useEffect(() => {
-    if (selectedObject) {
-      setNameInput(selectedObject.name);
-      setWidthInput(fromCm(selectedObject.width, unit).toFixed(0));
-      setHeightInput(fromCm(selectedObject.height, unit).toFixed(0));
-    } else {
-      setNameInput('');
-      setWidthInput('');
-      setHeightInput('');
-    }
-  }, [selectedObject, unit]);
+  // Derive display values from store
+  const displayName = selectedObject?.name ?? '';
+  const displayWidth = selectedObject ? fromCm(selectedObject.width, unit).toFixed(0) : '';
+  const displayHeight = selectedObject ? fromCm(selectedObject.height, unit).toFixed(0) : '';
 
   const handleAddObject = () => {
     const defaultWidth = DEFAULT_OBJECT_WIDTH;
@@ -51,42 +44,50 @@ export function ObjectConfig() {
     });
   };
 
-  const handleNameChange = (value: string) => {
-    setNameInput(value);
-    if (selectedObject) {
+  const handleFocus = (field: 'name' | 'width' | 'height') => {
+    setEditingField(field);
+    if (field === 'name') setEditValue(displayName);
+    else if (field === 'width') setEditValue(displayWidth);
+    else setEditValue(displayHeight);
+  };
+
+  const handleChange = (value: string) => {
+    setEditValue(value);
+    // Update name immediately as user types
+    if (editingField === 'name' && selectedObject) {
       updateObject(selectedObject.id, { name: value });
     }
   };
 
-  const handleWidthBlur = () => {
+  const handleBlur = (field: 'width' | 'height') => {
     if (selectedObject) {
-      const numValue = parseFloat(widthInput);
+      const numValue = parseFloat(editValue);
       if (!isNaN(numValue) && numValue > 0) {
-        updateObject(selectedObject.id, { width: toCm(numValue, unit) });
-      } else {
-        setWidthInput(fromCm(selectedObject.width, unit).toFixed(0));
+        if (field === 'width') {
+          updateObject(selectedObject.id, { width: toCm(numValue, unit) });
+        } else {
+          updateObject(selectedObject.id, { height: toCm(numValue, unit) });
+        }
       }
     }
+    setEditingField(null);
   };
 
-  const handleHeightBlur = () => {
-    if (selectedObject) {
-      const numValue = parseFloat(heightInput);
-      if (!isNaN(numValue) && numValue > 0) {
-        updateObject(selectedObject.id, { height: toCm(numValue, unit) });
-      } else {
-        setHeightInput(fromCm(selectedObject.height, unit).toFixed(0));
-      }
-    }
+  const handleNameBlur = () => {
+    setEditingField(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, field: 'width' | 'height') => {
     if (e.key === 'Enter') {
-      if (field === 'width') handleWidthBlur();
-      else handleHeightBlur();
+      handleBlur(field);
       (e.target as HTMLInputElement).blur();
     }
   };
+
+  // Get current input values
+  const nameInput = editingField === 'name' ? editValue : displayName;
+  const widthInput = editingField === 'width' ? editValue : displayWidth;
+  const heightInput = editingField === 'height' ? editValue : displayHeight;
 
   const handleDelete = () => {
     if (selectedObject) {
@@ -126,7 +127,9 @@ export function ObjectConfig() {
         <Input
           label="Frame Name"
           value={nameInput}
-          onChange={(e) => handleNameChange(e.target.value)}
+          onFocus={() => handleFocus('name')}
+          onChange={(e) => handleChange(e.target.value)}
+          onBlur={handleNameBlur}
         />
       </div>
 
@@ -140,8 +143,9 @@ export function ObjectConfig() {
             <Input
               type="number"
               value={widthInput}
-              onChange={(e) => setWidthInput(e.target.value)}
-              onBlur={handleWidthBlur}
+              onFocus={() => handleFocus('width')}
+              onChange={(e) => handleChange(e.target.value)}
+              onBlur={() => handleBlur('width')}
               onKeyDown={(e) => handleKeyDown(e, 'width')}
               suffix={unitSuffix}
               min="1"
@@ -152,8 +156,9 @@ export function ObjectConfig() {
             <Input
               type="number"
               value={heightInput}
-              onChange={(e) => setHeightInput(e.target.value)}
-              onBlur={handleHeightBlur}
+              onFocus={() => handleFocus('height')}
+              onChange={(e) => handleChange(e.target.value)}
+              onBlur={() => handleBlur('height')}
               onKeyDown={(e) => handleKeyDown(e, 'height')}
               suffix={unitSuffix}
               min="1"

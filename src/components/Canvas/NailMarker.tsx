@@ -1,9 +1,7 @@
 import { Circle, Group, Line } from 'react-konva';
 import type { Nail } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
-
-// Flag to communicate nail clicks to parent WallObject
-export const nailClickFlag = { clicked: false };
+import { nailClickFlag } from './nailClickFlag';
 
 interface NailMarkerProps {
   nail: Nail;
