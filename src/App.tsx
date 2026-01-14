@@ -23,8 +23,8 @@ function App() {
   }
 
   return (
-    <div style={{ height: '100%', width: '100%', backgroundColor: '#e8edf2', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-      <div style={{ width: '100%', maxWidth: '1280px', height: '100%', maxHeight: '900px', display: 'flex', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+    <div style={{ height: '100%', width: '100%', backgroundColor: '#e8edf2', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', gap: '16px' }}>
+      <div style={{ width: '100%', maxWidth: '1280px', flex: 1, maxHeight: '900px', display: 'flex', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
         {/* Left Sidebar */}
         <aside style={{ width: '400px', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
           {/* Header */}
@@ -52,6 +52,28 @@ function App() {
           <HoleInfoPanel />
         </main>
       </div>
+
+      {/* Footer */}
+      <footer style={{ fontSize: '13px', color: '#6b7280' }}>
+        Made by{' '}
+        <a
+          href="https://github.com/philipemosv"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#2563eb', textDecoration: 'none' }}
+        >
+          Philipe Oliveira
+        </a>
+        {' · '}
+        <a
+          href="https://github.com/philipemosv/nail-positioner-app"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#2563eb', textDecoration: 'none' }}
+        >
+          View on GitHub
+        </a>
+      </footer>
     </div>
   );
 }
