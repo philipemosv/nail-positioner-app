@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { CANVAS_PADDING } from '../constants';
 
@@ -14,8 +14,6 @@ interface CanvasDimensions {
 
 /**
  * Hook to calculate scale and positioning for the wall canvas
- * @param containerWidth Available container width in pixels
- * @param containerHeight Available container height in pixels
  */
 export function useCanvasScale(
   containerWidth: number,
@@ -34,7 +32,6 @@ export function useCanvasScale(
     const wallWidth = wall.width * scale;
     const wallHeight = wall.height * scale;
 
-    // Center the wall in the canvas
     const offsetX = (containerWidth - wallWidth) / 2;
     const offsetY = (containerHeight - wallHeight) / 2;
 
@@ -48,43 +45,4 @@ export function useCanvasScale(
       offsetY,
     };
   }, [containerWidth, containerHeight, wall.width, wall.height]);
-}
-
-/**
- * Convert real-world cm to canvas pixels
- */
-export function useCoordinateTransform(scale: number, offsetX: number, offsetY: number) {
-  const toCanvas = useCallback(
-    (cmX: number, cmY: number) => ({
-      x: offsetX + cmX * scale,
-      y: offsetY + cmY * scale,
-    }),
-    [scale, offsetX, offsetY]
-  );
-
-  const toReal = useCallback(
-    (canvasX: number, canvasY: number) => ({
-      x: (canvasX - offsetX) / scale,
-      y: (canvasY - offsetY) / scale,
-    }),
-    [scale, offsetX, offsetY]
-  );
-
-  const sizeToCanvas = useCallback(
-    (cmWidth: number, cmHeight: number) => ({
-      width: cmWidth * scale,
-      height: cmHeight * scale,
-    }),
-    [scale]
-  );
-
-  const sizeToReal = useCallback(
-    (canvasWidth: number, canvasHeight: number) => ({
-      width: canvasWidth / scale,
-      height: canvasHeight / scale,
-    }),
-    [scale]
-  );
-
-  return { toCanvas, toReal, sizeToCanvas, sizeToReal };
 }
