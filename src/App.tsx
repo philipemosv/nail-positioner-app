@@ -51,7 +51,7 @@ function App() {
           </div>
           <HoleInfoPanel />
           {/* Footer */}
-          <footer style={{ position: 'absolute', bottom: '8px', left: 0, right: 0, textAlign: 'center', fontSize: '12px', color: '#64748b' }}>
+          <footer style={{ position: 'absolute', bottom: '4px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap' }}>
             Made by{' '}
             <a
               href="https://github.com/philipemosv"
