@@ -2,7 +2,7 @@
 
 A web app for precisely positioning nails when hanging objects on walls. Define your wall dimensions, place objects, configure nail positions, and get exact real-world coordinates for nail placement.
 
-**Live Demo:** [hang-it.vercel.app](https://nail-positioner-application.vercel.app)
+**Live Demo:** [nail-positioner-app.vercel.app](https://nail-positioner-app.vercel.app/)
 
 ## Features
 
