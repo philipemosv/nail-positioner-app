@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# Hang It
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web app for precisely positioning nails when hanging objects on walls. Define your wall dimensions, place objects, configure nail positions, and get exact real-world coordinates for nail placement.
 
-Currently, two official plugins are available:
+**Live Demo:** [hang-it.vercel.app](https://nail-positioner-application.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Wall Setup** - Enter your wall dimensions in cm or inches
+- **Object Placement** - Add frames, pictures, or other objects and drag them to position
+- **Nail Configuration** - Set exact nail/hole positions relative to each object
+- **Smart Snapping** - Auto-snap to wall center, edges, and other objects while dragging
+- **Distance Indicators** - See exact distances from nails to wall edges
+- **Unit Switching** - Toggle between centimeters and inches
+- **PWA Support** - Install as an app on your device
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **React 19** + TypeScript
+- **Vite** - Build tool
+- **Tailwind CSS v4** - Styling
+- **Konva / React-Konva** - Canvas rendering
+- **Zustand** - State management with localStorage persistence
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Development
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start dev server
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Build for production
+npm run build
+
+# Run tests
+npm run test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## How It Works
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Measure your wall** - Use a tape measure to get width and height
+2. **Add what you're hanging** - Set the size and drag to position
+3. **Mark where to drill** - Get exact measurements from wall edges
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Author
+
+Made by [Philipe Oliveira](https://github.com/philipemosv)
+
+## License
+
+MIT
