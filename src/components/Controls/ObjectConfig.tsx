@@ -63,11 +63,18 @@ export function ObjectConfig() {
     if (selectedObject) {
       const numValue = parseFloat(editValue);
       if (!isNaN(numValue) && numValue > 0) {
-        if (field === 'width') {
-          updateObject(selectedObject.id, { width: toCm(numValue, unit) });
-        } else {
-          updateObject(selectedObject.id, { height: toCm(numValue, unit) });
-        }
+        const newValueCm = toCm(numValue, unit);
+        const newWidth = field === 'width' ? newValueCm : selectedObject.width;
+        const newHeight = field === 'height' ? newValueCm : selectedObject.height;
+
+        // Redistribute nails based on new dimensions
+        const newNails = distributeNails(newWidth, newHeight, selectedObject.nails.length);
+
+        updateObject(selectedObject.id, {
+          width: newWidth,
+          height: newHeight,
+          nails: newNails,
+        });
       }
     }
     setEditingField(null);
